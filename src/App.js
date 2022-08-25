@@ -14,12 +14,12 @@ class App extends React.Component {
     cardTrunfo: false,
     buttonDisabled: true,
     hasTrunfo: false,
-    trunfoCheck: false,
-    isSaveButtonDisabled: true,
+    // trunfoCheck: false,
+    // isSaveButtonDisabled: true,
   };
 
   onInputChange = (event) => {
-    const { name, type, checked, value, target } = event;
+    const { target } = event;
     this.setState({ [target.name]: target.type === 'checkbox'
       ? target.checked : target.value,
     }, () => this.setState({
