@@ -2,6 +2,8 @@ import React from 'react';
 import Form from './components/Form';
 import Card from './components/Card';
 
+// baseado mentoria Hellen 24-08-2022//
+
 class App extends React.Component {
   state = {
     cardName: '',
@@ -18,6 +20,8 @@ class App extends React.Component {
     previewOn: false,
   };
 
+  // baseado mentoria Hellen 24-08-2022//
+
   onSaveButtonClick = (objetoInfo) => {
     this.setState((prevState) => ({
       cards: [...prevState.cards, objetoInfo],
@@ -31,6 +35,8 @@ class App extends React.Component {
       cardRare: 'Normal',
     }));
   };
+
+  // baseado mentoria Hellen 24-08-2022//
 
   onInputChange = ({ target }) => {
     const { name, type } = target;
@@ -72,6 +78,7 @@ class App extends React.Component {
       });
     }
   };
+  // baseado mentoria Hellen 24-08-2022//
 
   render() {
     const { cardName,
