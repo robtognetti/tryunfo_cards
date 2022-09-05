@@ -10,48 +10,71 @@ class App extends React.Component {
     cardAttr2: '',
     cardAttr3: '',
     cardImage: '',
-    cardRare: 'normal',
+    cardRare: '',
     cardTrunfo: false,
-    buttonDisabled: true,
     hasTrunfo: false,
-    // trunfoCheck: false,
-    // isSaveButtonDisabled: true,
+    isSaveButtonDisabled: true,
+    cards: [],
+    previewOn: false,
   };
 
-  onInputChange = (event) => {
-    const { target } = event;
-    this.setState({ [target.name]: target.type === 'checkbox'
-      ? target.checked : target.value,
-    }, () => this.setState({
-      buttonDisabled: this.isSaveButtonDisabled(),
+  onSaveButtonClick = (objetoInfo) => {
+    this.setState((prevState) => ({
+      cards: [...prevState.cards, objetoInfo],
+      previewOn: true,
+      cardName: '',
+      cardDescription: '',
+      cardAttr1: '0',
+      cardAttr2: '0',
+      cardAttr3: '0',
+      cardImage: '',
+      cardRare: 'Normal',
     }));
   };
 
-  isSaveButtonDisabled = () => {
-    const {
-      cardName,
-      cardDescription,
-      cardAttr1,
-      cardAttr2,
-      cardAttr3,
-      cardImage,
-      cardRare,
-    } = this.state;
+  onInputChange = ({ target }) => {
+    const { name, type } = target;
+    const value = type === 'checkbox' ? target.checked : target.value;
+    this.setState({
+      [name]: value,
+    }, () => {
+      this.validaInput();
+      if (type !== 'checkbox') {
+        this.setState({
+          hasTrunfo: false,
+          cardTrunfo: false,
+        });
+      } else {
+        this.setState({
+          hasTrunfo: true,
+          cardTrunfo: true,
+        });
+      }
+    });
+  };
+
+  validaInput = () => {
+    const { cardName, cardDescription, cardImage, cardRare, cardAttr1, cardAttr2,
+      cardAttr3 } = this.state;
     const soma = 210;
-    const individual = 90;
-    if (Number(cardAttr1) < 0 || Number(cardAttr1) > individual) { return true; }
-    if (Number(cardAttr2) < 0 || Number(cardAttr2) > individual) { return true; }
-    if (Number(cardAttr3) < 0 || Number(cardAttr3) > individual) { return true; }
-    if (cardName.length === 0
-      || cardDescription.length === 0
-      || cardImage.length === 0
-      || cardRare.length === 0) { return true; }
-    return Number(cardAttr1) + Number(cardAttr2) + Number(cardAttr3) > soma;
+    const maximo = 90;
+    if (cardName && cardDescription && cardImage && cardRare
+      && Number(cardAttr1) + Number(cardAttr2) + Number(cardAttr3) <= soma
+      && Number(cardAttr1) >= 0 && Number(cardAttr1) <= maximo
+      && Number(cardAttr2) >= 0 && Number(cardAttr2) <= maximo
+      && Number(cardAttr3) >= 0 && Number(cardAttr3) <= maximo) {
+      this.setState({
+        isSaveButtonDisabled: false,
+      });
+    } else {
+      this.setState({
+        isSaveButtonDisabled: true,
+      });
+    }
   };
 
   render() {
-    const {
-      cardName,
+    const { cardName,
       cardDescription,
       cardAttr1,
       cardAttr2,
@@ -59,15 +82,15 @@ class App extends React.Component {
       cardImage,
       cardRare,
       cardTrunfo,
-      buttonDisabled,
       hasTrunfo,
+      isSaveButtonDisabled,
+      previewOn,
+      cards,
     } = this.state;
-
     return (
       <div>
         <h1>Tryunfo</h1>
         <Form
-          onInputChange={ this.onInputChange }
           cardName={ cardName }
           cardDescription={ cardDescription }
           cardAttr1={ cardAttr1 }
@@ -76,12 +99,12 @@ class App extends React.Component {
           cardImage={ cardImage }
           cardRare={ cardRare }
           cardTrunfo={ cardTrunfo }
-          isSaveButtonDisabled={ buttonDisabled }
-          onSaveButtonClick={ this.cardSave }
           hasTrunfo={ hasTrunfo }
+          isSaveButtonDisabled={ isSaveButtonDisabled }
+          onInputChange={ this.onInputChange }
+          onSaveButtonClick={ this.onSaveButtonClick }
         />
         <Card
-          onInputChange={ this.onInputChange }
           cardName={ cardName }
           cardDescription={ cardDescription }
           cardAttr1={ cardAttr1 }
@@ -90,10 +113,24 @@ class App extends React.Component {
           cardImage={ cardImage }
           cardRare={ cardRare }
           cardTrunfo={ cardTrunfo }
+          hasTrunfo={ hasTrunfo }
         />
+        {
+          previewOn && cards.map((element) => (<Card
+            key={ element.cardName }
+            cardName={ element.cardName }
+            cardDescription={ element.cardDescription }
+            cardImage={ element.cardImage }
+            cardRare={ element.cardRare }
+            cardAttr1={ element.cardAttr1 }
+            cardAttr2={ element.cardAttr2 }
+            cardAttr3={ element.cardAttr3 }
+            cardTrunfo={ element.cardTrunfo }
+            hasTrunfo={ element.hasTrunfo }
+          />))
+        }
       </div>
     );
   }
 }
-
 export default App;
